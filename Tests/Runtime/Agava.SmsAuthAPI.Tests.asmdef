@@ -1,0 +1,16 @@
+{
+    "name": "Agava.SmsAuthAPI.Tests",
+    "rootNamespace": "",
+    "references": [
+        "GUID:9d651439634f1624abf9cbfe1d73d7d9"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

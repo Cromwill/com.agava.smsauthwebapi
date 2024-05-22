@@ -1,0 +1,14 @@
+{
+  "name": "com.agava.smsauthwebapi",
+  "version": "1.0.0",
+  "displayName": "Sms Auth Web API",
+  "type": "library",
+  "unity": "2022.3",
+  "description": "Sms Authenfication. Cloud saves.",
+  "license": "MIT",
+  "dependencies": {
+    "com.unity.nuget.newtonsoft-json": "3.0.2",
+    "com.unity.textmeshpro": "3.0.6"
+  },
+  "author": "github.com/doCent90"
+}
