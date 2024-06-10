@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Newtonsoft.Json;
 using SmsAuthAPI.DTO;
 
@@ -107,7 +108,7 @@ namespace SmsAuthAPI.Program
             return new Response(webRequest.result, webRequest.result.ToString(), webRequest.downloadHandler.text, false);
         }
 
-        public async Task<Response> GetCloudData(Request request)
+        public async Task<Response> GetCloudData(Request request, Action<float> progress)
         {
             string path = $"{GetHttpPath(request.apiName, request.body)}";
             OnTryConnecting(path);
@@ -115,14 +116,71 @@ namespace SmsAuthAPI.Program
             var webRequest = CreateWebRequest(path, RequestType.GET, request.access_token);
             webRequest.SendWebRequest();
 
-            await WaitProccessing(webRequest);
+            await WaitProccessing(webRequest, progress);
             TryShowRequestInfo(webRequest, request.apiName);
 
             var body = JsonConvert.DeserializeObject<string>(webRequest.downloadHandler.text);
             return new Response(webRequest.result, webRequest.result.ToString(), body, false);
         }
 
+        public async Task<Response> GetAccountData(Request request)
+        {
+            string path = $"{GetHttpPath(request.apiName, request.body, api: false)}";
+            OnTryConnecting(path);
+
+            var webRequest = CreateWebRequest(path, RequestType.GET);
+            webRequest.SendWebRequest();
+
+            await WaitProccessing(webRequest);
+            TryShowRequestInfo(webRequest, request.apiName);
+
+            return new Response(webRequest.result, webRequest.result.ToString(), null, false);
+        }
+
 #if UNITY_EDITOR || TEST
+        public async Task<Response> WriteCloudData(Request request, string phone)
+        {
+            string path = $"{GetHttpPath(request.apiName, phone)}";
+            OnTryConnecting(path);
+
+            var webRequest = CreateWebRequest(path, RequestType.PUT, null, request.body);
+            webRequest.SendWebRequest();
+
+            await WaitProccessing(webRequest);
+            TryShowRequestInfo(webRequest, request.apiName);
+
+            return new Response(webRequest.result, webRequest.result.ToString(), webRequest.downloadHandler.text, false);
+        }
+
+        public async Task<Response> GetCloudData(string apiName, string phone)
+        {
+            string path = $"{GetHttpPath(apiName, phone)}";
+            OnTryConnecting(path);
+
+            var webRequest = CreateWebRequest(path, RequestType.GET);
+            webRequest.SendWebRequest();
+
+            await WaitProccessing(webRequest);
+            TryShowRequestInfo(webRequest, apiName);
+
+            var body = JsonConvert.DeserializeObject<string>(webRequest.downloadHandler.text);
+            return new Response(webRequest.result, webRequest.result.ToString(), body, false);
+        }
+
+        public async Task<Response> ClearAllCloudData(string apiName, string password)
+        {
+            string path = $"{GetHttpPath(apiName, password)}";
+            OnTryConnecting(path);
+
+            var webRequest = CreateWebRequest(path, RequestType.POST);
+            webRequest.SendWebRequest();
+
+            await WaitProccessing(webRequest);
+            TryShowRequestInfo(webRequest, apiName);
+
+            return new Response(webRequest.result, webRequest.result.ToString(), webRequest.downloadHandler.text, false);
+        }
+
         public async Task<Response> Write(string apiName, string phone, ulong count)
         {
             string path = $"{GetHttpPath(apiName, phone)}";
@@ -137,9 +195,9 @@ namespace SmsAuthAPI.Program
             return new Response(webRequest.result, webRequest.result.ToString(), webRequest.downloadHandler.text, false);
         }
 
-        public async Task<Response> ClearOtp(string apiName)
+        public async Task<Response> ClearOtp(string apiName, string route)
         {
-            string path = $"{GetHttpPath(apiName)}";
+            string path = $"{GetHttpPath(apiName, route)}";
             OnTryConnecting(path);
 
             var webRequest = CreateWebRequest(path, RequestType.POST);

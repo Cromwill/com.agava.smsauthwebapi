@@ -80,5 +80,7 @@ namespace SmsAuthAPI.DTO
         }
 
         public static Tokens GetTokens() => SaveLoadLocalDataService.Load<Tokens>(Tokens);
+
+        public static void ClearTokens() => SaveLoadLocalDataService.Delete(Tokens);
     }
 }

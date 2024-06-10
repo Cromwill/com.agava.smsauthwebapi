@@ -11,6 +11,7 @@ namespace SmsAuthAPI.Program
         private static string _uniqueId;
 
         public static bool Initialized => _httpClient != null;
+        public static event Action<float> DownloadCloudSavesProgress;
 
         public static void Initialize(string connectId, string uniqueId)
         {
@@ -130,7 +131,20 @@ namespace SmsAuthAPI.Program
                 access_token = accessToken,
             };
 
-            return await _httpClient.GetCloudData(request);
+            return await _httpClient.GetCloudData(request, DownloadCloudSavesProgress);
+        }
+
+        public async static Task<Response> GetAccountData(string phoneNumber)
+        {
+            EnsureInitialize();
+
+            var request = new Request()
+            {
+                apiName = "Account/subscription",
+                body = phoneNumber,
+            };
+
+            return await _httpClient.GetAccountData(request);
         }
 
         private static void EnsureInitialize()
@@ -140,31 +154,56 @@ namespace SmsAuthAPI.Program
         }
 
 #if UNITY_EDITOR || TEST
+        public async static Task<Response> WriteSaveClouds(string phoneNumber, string body)
+        {
+            EnsureInitialize();
+
+            var request = new Request()
+            {
+                apiName = "StressTest",
+                body = body,
+            };
+
+            return await _httpClient.WriteCloudData(request, $"cloud-data/{phoneNumber}");
+        }
+
+        public async static Task<Response> GetSaveCloud(string phoneNumber)
+        {
+            EnsureInitialize();
+            return await _httpClient.GetCloudData("StressTest", $"cloud-data/{phoneNumber}");
+        }
+
+        public async static Task<Response> ClearAllSaveCloud(string password)
+        {
+            EnsureInitialize();
+            return await _httpClient.ClearAllCloudData("StressTest", $"cloud-data/{password}");
+        }
+
         public async static Task<Response> Write(string phoneNumber, ulong count)
         {
             EnsureInitialize();
-            return await _httpClient.Write("TestDataBase", phoneNumber, count);
+            return await _httpClient.Write("StressTest", phoneNumber, count);
         }
 
         public async static Task<Response> ClearOtpTable()
         {
             EnsureInitialize();
 
-            return await _httpClient.ClearOtp("TestDataBase");
+            return await _httpClient.ClearOtp("StressTest", "clear-otp-codes");
         }
 
         public async static Task<Response> GetOtpsCount()
         {
             EnsureInitialize();
 
-            return await _httpClient.GetOtpCount("TestDataBase");
+            return await _httpClient.GetOtpCount("StressTest");
         }
 
         public async static Task<Response> GetOtpsWrites(string otp)
         {
             EnsureInitialize();
 
-            return await _httpClient.GetOtpWrites("TestDataBase", otp);
+            return await _httpClient.GetOtpWrites("StressTest", otp);
         }
 #endif
     }

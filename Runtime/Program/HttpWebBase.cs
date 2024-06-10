@@ -1,4 +1,6 @@
-﻿using System.Text;
+﻿using System;
+using System.Security.Cryptography.X509Certificates;
+using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -7,7 +9,7 @@ namespace SmsAuthAPI.Program
 {
     internal abstract class HttpWebBase
     {
-        private const string RootApi = "api";
+        private const string RootApi = "/api";
         private const string AppJson = "application/json";
         private const string ContentType = "Content-Type";
         protected const int TimeOut = 59;
@@ -16,13 +18,7 @@ namespace SmsAuthAPI.Program
 
         protected enum RequestType { POST, GET, PUT }
 
-        public HttpWebBase(string connectId)
-        {
-            Ip = connectId;
-#if UNITY_EDITOR || TEST
-            Debug.Log("http id: " + Ip);
-#endif
-        }
+        public HttpWebBase(string connectId) => Ip = connectId;
 
         protected void OnTryConnecting(string path)
         {
@@ -31,17 +27,18 @@ namespace SmsAuthAPI.Program
 #endif
         }
 
-        protected string GetHttpPath(string apiName, string apiData = null)
+        protected string GetHttpPath(string apiName, string apiData = null, bool api = true)
         {
             apiData ??= string.Empty;
 
-            string path = $"{Ip}/{RootApi}/{apiName.ToLower()}/{apiData}";
+            string apiRoute = string.Empty;
 
-#if UNITY_EDITOR && TEST
+            if (api)
+                apiRoute = RootApi;
+
+            string path = $"{Ip}{apiRoute}/{apiName.ToLower()}/{apiData}";
+
             return $"http://{path}";
-#else
-            return $"https://{path}";
-#endif
         }
 
         protected UnityWebRequest CreateWebRequest(string path, RequestType type, string accessToken = null, string uploadBody = null, bool timeOut = true)
@@ -63,10 +60,13 @@ namespace SmsAuthAPI.Program
             return webRequest;
         }
 
-        protected async Task WaitProccessing(UnityWebRequest webRequest)
+        protected async Task WaitProccessing(UnityWebRequest webRequest, Action<float> progress = null)
         {
             while (webRequest.result == UnityWebRequest.Result.InProgress)
+            {
+                progress?.Invoke(webRequest.downloadProgress);
                 await Task.Yield();
+            }
         }
 
         protected void TryShowRequestInfo(UnityWebRequest webRequest, string method)
@@ -76,6 +76,24 @@ namespace SmsAuthAPI.Program
 #endif
             if (webRequest.result != UnityWebRequest.Result.Success)
                 Debug.LogError($"Response {method} fail: {webRequest.error}, {webRequest.result}");
+        }
+    }
+
+    public class CertificateHandlerPublicKey : CertificateHandler
+    {
+        private static readonly string s_publicKey = "somepublickey";
+
+        protected override bool ValidateCertificate(byte[] certificateData)
+        {
+            X509Certificate2 certificate = new X509Certificate2(certificateData);
+            string pk = certificate.GetPublicKeyString();
+
+            Debug.Log(pk);
+
+            if (pk.ToLower().Equals(s_publicKey.ToLower()))
+                return true;
+
+            return false;
         }
     }
 }
