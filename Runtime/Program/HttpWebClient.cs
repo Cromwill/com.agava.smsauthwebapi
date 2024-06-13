@@ -5,7 +5,7 @@ using SmsAuthAPI.DTO;
 
 namespace SmsAuthAPI.Program
 {
-    internal class HttpWebClient : HttpWebBase
+    internal partial class HttpWebClient : HttpWebBase
     {
         public HttpWebClient(string connectId) : base(connectId) { }
 
@@ -123,7 +123,7 @@ namespace SmsAuthAPI.Program
             return new Response(webRequest.result, webRequest.result.ToString(), body, false);
         }
 
-        public async Task<Response> GetAccountData(Request request)
+        public async Task<Response> HasActiveAccount(Request request)
         {
             string path = $"{GetHttpPath(request.apiName, request.body, api: false)}";
             OnTryConnecting(path);
@@ -134,10 +134,57 @@ namespace SmsAuthAPI.Program
             await WaitProccessing(webRequest);
             TryShowRequestInfo(webRequest, request.apiName);
 
+            return new Response(webRequest.result, webRequest.result.ToString(), webRequest.downloadHandler.text, false);
+        }
+
+        public async Task<Response> GetSanId(Request request)
+        {
+            string path = $"{GetHttpPath(request.apiName, request.body, api: false)}";
+            OnTryConnecting(path);
+
+            var webRequest = CreateWebRequest(path, RequestType.GET);
+            webRequest.SendWebRequest();
+
+            await WaitProccessing(webRequest);
+            TryShowRequestInfo(webRequest, request.apiName);
+
+            return new Response(webRequest.result, webRequest.result.ToString(), webRequest.downloadHandler.text, false);
+        }
+
+
+        public async Task<Response> SetTimespent(Request request)
+        {
+            string path = $"{GetHttpPath(request.apiName, null, api: false)}";
+            OnTryConnecting(path);
+
+            var webRequest = CreateWebRequest(path, RequestType.POST, null, request.body);
+            webRequest.SendWebRequest();
+
+            await WaitProccessing(webRequest);
+            TryShowRequestInfo(webRequest, request.apiName);
+
             return new Response(webRequest.result, webRequest.result.ToString(), null, false);
         }
 
+        public async Task<Response> OnUserAddApp(Request request)
+        {
+            string path = $"{GetHttpPath(request.apiName, null, api: false)}";
+            OnTryConnecting(path);
+
+            var webRequest = CreateWebRequest(path, RequestType.POST, null, request.body);
+            webRequest.SendWebRequest();
+
+            await WaitProccessing(webRequest);
+            TryShowRequestInfo(webRequest, request.apiName);
+
+            return new Response(webRequest.result, webRequest.result.ToString(), null, false);
+        }
+    }
+
+    #region Test fuctions
 #if UNITY_EDITOR || TEST
+    internal partial class HttpWebClient : HttpWebBase 
+    { 
         public async Task<Response> WriteCloudData(Request request, string phone)
         {
             string path = $"{GetHttpPath(request.apiName, phone)}";
@@ -236,6 +283,7 @@ namespace SmsAuthAPI.Program
 
             return new Response(webRequest.result, webRequest.result.ToString(), webRequest.downloadHandler.text, false);
         }
-#endif
     }
+#endif
+    #endregion
 }
