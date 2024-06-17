@@ -174,14 +174,14 @@ namespace SmsAuthAPI.Program
         class TimespentAllUsersData
         {
             public string app_id;
-            public int time;
+            public ulong minutes;
         }
 
         class TimespentUserAllAppData
         {
             public string phone;
             public string device_id;
-            public int time;
+            public ulong minutes;
         }
 
         class AverageCountAppsUserData
@@ -192,14 +192,14 @@ namespace SmsAuthAPI.Program
             public int count { get; set; }
         }
 
-        public async static void SetTimespentAllUsers(string appId, int time)
+        public async static void SetTimespentAllUsers(string appId, ulong minutes)
         {
             EnsureInitialize();
 
             string data = JsonConvert.SerializeObject(new TimespentAllUsersData()
             {
                 app_id = appId,
-                time = time
+                minutes = minutes
             });
 
             var request = new Request()
@@ -211,7 +211,7 @@ namespace SmsAuthAPI.Program
             await _httpClient.SetTimespent(request);
         }
 
-        public async static void SetTimespentAllApp(string phone, string deviceId, int time)
+        public async static void SetTimespentAllApp(string phone, string deviceId, ulong minutes)
         {
             EnsureInitialize();
 
@@ -219,7 +219,7 @@ namespace SmsAuthAPI.Program
             {
                 phone = phone,
                 device_id = deviceId,
-                time = time
+                minutes = minutes
             });
 
             var request = new Request()
