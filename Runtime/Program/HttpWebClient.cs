@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using SmsAuthAPI.DTO;
+using UnityEngine;
 
 namespace SmsAuthAPI.Program
 {
@@ -119,7 +121,14 @@ namespace SmsAuthAPI.Program
             await WaitProccessing(webRequest, progress);
             TryShowRequestInfo(webRequest, request.apiName);
 
-            var body = JsonConvert.DeserializeObject<string>(webRequest.downloadHandler.text);
+            string body = webRequest.downloadHandler.text;
+
+            try
+            {
+                body = JsonConvert.DeserializeObject<string>(webRequest.downloadHandler.text);
+            }
+            catch (Exception) { }
+
             return new Response(webRequest.result, webRequest.result.ToString(), body, false);
         }
 
