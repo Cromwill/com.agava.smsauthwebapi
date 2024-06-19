@@ -162,19 +162,6 @@ namespace SmsAuthAPI.Program
             return await _httpClient.GetSanId(request);
         }
 
-        public async static Task<Response> SendSms(string phone)
-        {
-            EnsureInitialize();
-
-            var request = new Request()
-            {
-                apiName = "Sms",
-                body = phone,
-            };
-
-            return await _httpClient.SendSms(request);
-        }
-
         private static void EnsureInitialize()
         {
             if (Initialized == false)

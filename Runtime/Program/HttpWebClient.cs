@@ -151,21 +151,6 @@ namespace SmsAuthAPI.Program
             return new Response(webRequest.result, webRequest.result.ToString(), webRequest.downloadHandler.text, false);
         }
 
-        public async Task<Response> SendSms(Request request)
-        {
-            string path = $"{GetHttpPath(request.apiName, request.body)}";
-            OnTryConnecting(path);
-
-            var webRequest = CreateWebRequest(path, RequestType.POST);
-            webRequest.SendWebRequest();
-
-            await WaitProccessing(webRequest);
-            TryShowRequestInfo(webRequest, request.apiName);
-
-            return new Response(webRequest.result, webRequest.result.ToString(), null, false);
-        }
-
-
         public async Task<Response> SetTimespent(Request request)
         {
             string path = $"{GetHttpPath(request.apiName, null, api: false)}";
