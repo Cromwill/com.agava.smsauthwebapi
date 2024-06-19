@@ -35,20 +35,14 @@ namespace SmsAuthAPI.Utility
             SaveLoadCloudDataService.SaveData(jsonData);
         }
 
-        public static async Task<bool> Load()
+        public static async Task Load()
         {
             var result = await SaveLoadCloudDataService.LoadData();
 
             if (string.IsNullOrEmpty(result))
-            {
                 OnLoadErrorCallback(result);
-                return false;
-            }
             else
-            {
                 OnLoadSuccessCallback(result);
-                return true;
-            }
         }
 
         enum IterationState
