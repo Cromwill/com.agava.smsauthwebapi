@@ -36,7 +36,7 @@ namespace SmsAuthAPI.Program
             var request = new Request()
             {
                 apiName = "Login",
-                body = JsonConvert.SerializeObject(loginData),
+                body = System.Text.Json.JsonSerializer.Serialize(loginData, typeof(LoginData)),
             };
 
             return await _httpClient.Login(request);
@@ -255,7 +255,7 @@ namespace SmsAuthAPI.Program
     #region Test function
 #if UNITY_EDITOR || TEST
     public static partial class SmsAuthApi
-    { 
+    {
         public async static Task<Response> WriteSaveClouds(string phoneNumber, string body)
         {
             EnsureInitialize();
