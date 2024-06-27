@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Text;
+using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using SmsAuthAPI.DTO;
@@ -32,6 +34,8 @@ namespace SmsAuthAPI.Program
         public async static Task<Response> Login(LoginData loginData)
         {
             EnsureInitialize();
+
+            Debug.Log($"Phone: {loginData.phone} Code: {loginData.otp_code} Device_id: {loginData.device_id}");
 
             var request = new Request()
             {

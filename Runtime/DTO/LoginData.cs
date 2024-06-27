@@ -1,11 +1,12 @@
 ﻿using System;
+using UnityEngine.Scripting;
 
 namespace SmsAuthAPI.DTO
 {
     /// <summary>
     ///     Client data storage.
     /// </summary>
-    [Serializable]
+    [Serializable, Preserve]
     public class LoginData
     {
         public string phone { get; set; }
