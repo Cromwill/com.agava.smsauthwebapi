@@ -43,6 +43,7 @@ namespace SmsAuthAPI.Program
 
         protected UnityWebRequest CreateWebRequest(string path, RequestType type, string accessToken = null, string uploadBody = null, bool timeOut = true)
         {
+            Debug.Log($"path - {path}\nReq type - {type}\ntoken - {accessToken}\n, body - {uploadBody}\ntimeout - {timeOut}");
             var webRequest = new UnityWebRequest(path, type.ToString());
             webRequest.downloadHandler = new DownloadHandlerBuffer();
 
@@ -57,6 +58,9 @@ namespace SmsAuthAPI.Program
             if (string.IsNullOrEmpty(accessToken) == false)
                 webRequest.SetRequestHeader("Authorization", $"Bearer {accessToken}");
 
+            Debug.Log($"uri - {webRequest.uri}\n" +
+                $"url - {webRequest.url}\n" +
+                $"error - {webRequest.error}");
             return webRequest;
         }
 
