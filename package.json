@@ -8,7 +8,7 @@
   "license": "MIT",
   "dependencies": {
     "com.unity.nuget.newtonsoft-json": "3.0.2",
-    "com.unity.textmeshpro": "3.0.9"
+    "com.unity.textmeshpro": "3.0.6"
   },
   "author": "github.com/doCent90"
 }
