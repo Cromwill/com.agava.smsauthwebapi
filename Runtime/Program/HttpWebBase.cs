@@ -38,7 +38,7 @@ namespace SmsAuthAPI.Program
 
             string path = $"{Ip}{apiRoute}/{apiName.ToLower()}/{apiData}";
 
-            return $"https://{path}";
+            return $"http://{path}";
         }
 
         protected UnityWebRequest CreateWebRequest(string path, RequestType type, string accessToken = null, string uploadBody = null, bool timeOut = true)

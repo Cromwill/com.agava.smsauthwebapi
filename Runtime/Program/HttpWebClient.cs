@@ -55,10 +55,10 @@ namespace SmsAuthAPI.Program
 
         public async Task<Response> Unlink(Request request)
         {
-            string path = $"{GetHttpPath(request.apiName, request.body)}";
+            string path = $"{GetHttpPath(request.apiName)}";
             OnTryConnecting(path);
 
-            var webRequest = CreateWebRequest(path, RequestType.POST, request.access_token);
+            var webRequest = CreateWebRequest(path, RequestType.POST, request.access_token, request.body);
             webRequest.SendWebRequest();
 
             await WaitProccessing(webRequest);
@@ -69,7 +69,7 @@ namespace SmsAuthAPI.Program
 
         public async Task<Response> GetDevices(Request request)
         {
-            string path = $"{GetHttpPath(request.apiName)}";
+            string path = $"{GetHttpPath(request.apiName, request.body)}";
             OnTryConnecting(path);
 
             var webRequest = CreateWebRequest(path, RequestType.GET, request.access_token);
@@ -119,6 +119,20 @@ namespace SmsAuthAPI.Program
             webRequest.SendWebRequest();
 
             await WaitProccessing(webRequest, progress);
+            TryShowRequestInfo(webRequest, request.apiName);
+
+            return new Response(webRequest.result, webRequest.result.ToString(), webRequest.downloadHandler.text, false);
+        }
+
+        public async Task<Response> DeleteAccount(Request request, string key)
+        {
+            string path = $"{GetHttpPath(request.apiName, key)}";
+            OnTryConnecting(path);
+
+            var webRequest = CreateWebRequest(path, RequestType.POST, request.access_token);
+            webRequest.SendWebRequest();
+
+            await WaitProccessing(webRequest);
             TryShowRequestInfo(webRequest, request.apiName);
 
             return new Response(webRequest.result, webRequest.result.ToString(), webRequest.downloadHandler.text, false);
@@ -183,8 +197,8 @@ namespace SmsAuthAPI.Program
 
     #region Test fuctions
 #if UNITY_EDITOR || TEST
-    internal partial class HttpWebClient : HttpWebBase 
-    { 
+    internal partial class HttpWebClient : HttpWebBase
+    {
         public async Task<Response> WriteCloudData(Request request, string phone)
         {
             string path = $"{GetHttpPath(request.apiName, phone)}";

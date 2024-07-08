@@ -12,5 +12,6 @@ namespace SmsAuthAPI.DTO
         public string phone { get; set; }
         public string otp_code { get; set; }
         public string device_id { get; set; }
+        public string app_id { get; set; }
     }
 }

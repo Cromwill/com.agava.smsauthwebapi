@@ -11,23 +11,23 @@ namespace SmsAuthAPI.Program
     public static partial class SmsAuthApi
     {
         private static HttpWebClient _httpClient;
-        private static string _uniqueId;
+        private static string _appId;
 
         public static bool Initialized => _httpClient != null;
         public static event Action<float> DownloadCloudSavesProgress;
 
-        public static void Initialize(string connectId, string uniqueId)
+        public static void Initialize(string connectId, string appId)
         {
             if (string.IsNullOrEmpty(connectId))
                 throw new InvalidOperationException(nameof(SmsAuthApi) + " Ip not entered");
 
-            if (string.IsNullOrEmpty(uniqueId))
-                throw new InvalidOperationException(nameof(SmsAuthApi) + " uniqueId not entered");
+            if (string.IsNullOrEmpty(appId))
+                throw new InvalidOperationException(nameof(SmsAuthApi) + " appId not entered");
 
             if (Initialized)
                 throw new InvalidOperationException(nameof(SmsAuthApi) + " has already been initialized");
 
-            _uniqueId = uniqueId;
+            _appId = appId;
             _httpClient = new HttpWebClient(connectId);
         }
 
@@ -35,7 +35,7 @@ namespace SmsAuthAPI.Program
         {
             EnsureInitialize();
 
-            Debug.Log($"Phone: {loginData.phone} Code: {loginData.otp_code} Device_id: {loginData.device_id}");
+            Debug.Log($"Phone: {loginData.phone} Code: {loginData.otp_code} Device_id: {loginData.device_id} App_id: {loginData.app_id}");
 
             var request = new Request()
             {
@@ -65,28 +65,28 @@ namespace SmsAuthAPI.Program
             return await _httpClient.Refresh(request);
         }
 
-        public async static Task<Response> GetDevices(string accessToken)
+        public async static Task<Response> GetDevices(string accessToken, string app_id)
         {
             EnsureInitialize();
 
             var request = new Request()
             {
                 apiName = "Login",
-                body = _uniqueId,
+                body = app_id,
                 access_token = accessToken,
             };
 
             return await _httpClient.GetDevices(request);
         }
 
-        public async static Task<Response> Unlink(string accessToken, string deviceId)
+        public async static Task<Response> Unlink(string accessToken, UnlinkData unlinkData)
         {
             EnsureInitialize();
 
             var request = new Request()
             {
                 apiName = "Unlink",
-                body = deviceId,
+                body = System.Text.Json.JsonSerializer.Serialize(unlinkData, typeof(UnlinkData)),
                 access_token = accessToken,
             };
 
@@ -122,7 +122,7 @@ namespace SmsAuthAPI.Program
                 access_token = accessToken,
             };
 
-            return await _httpClient.SetCloudData(request, key: _uniqueId);
+            return await _httpClient.SetCloudData(request, key: _appId);
         }
 
         public async static Task<Response> GetSave(string accessToken)
@@ -132,11 +132,25 @@ namespace SmsAuthAPI.Program
             var request = new Request()
             {
                 apiName = "CloudSave",
-                body = _uniqueId,
+                body = _appId,
                 access_token = accessToken,
             };
 
             return await _httpClient.GetCloudData(request, DownloadCloudSavesProgress);
+        }
+
+        public async static Task<Response> DeleteAccount(string accessToken)
+        {
+            EnsureInitialize();
+
+            var request = new Request()
+            {
+                apiName = "DeleteAccount",
+                body = _appId,
+                access_token = accessToken,
+            };
+
+            return await _httpClient.DeleteAccount(request, key: _appId);
         }
 
         public async static Task<Response> HasActiveAccount(string phoneNumber)
@@ -165,6 +179,7 @@ namespace SmsAuthAPI.Program
             return await _httpClient.GetSanId(request);
         }
 
+
         private static void EnsureInitialize()
         {
             if (Initialized == false)
@@ -191,8 +206,7 @@ namespace SmsAuthAPI.Program
         {
             public string phone { get; set; }
             public string san_id { get; set; }
-            public string app_ids { get; set; }
-            public int count { get; set; }
+            public string app_id { get; set; }
         }
 
         public async static void SetTimespentAllUsers(string appId, ulong minutes)
@@ -234,7 +248,7 @@ namespace SmsAuthAPI.Program
             await _httpClient.SetTimespent(request);
         }
 
-        public async static void OnUserAddApp(string phone, string sanId)
+        public async static void OnUserAddApp(string phone, string sanId, string appId)
         {
             EnsureInitialize();
 
@@ -242,8 +256,7 @@ namespace SmsAuthAPI.Program
             {
                 phone = phone,
                 san_id = sanId,
-                app_ids = Application.identifier,
-                count = 0,
+                app_id = appId,
             });
 
             var request = new Request()
