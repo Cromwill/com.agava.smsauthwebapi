@@ -14,11 +14,11 @@ namespace SmsAuthAPI.Program
         private const string ContentType = "Content-Type";
         protected const int TimeOut = 59;
 
-        private readonly string Ip;
+        private readonly string _ip;
 
         protected enum RequestType { POST, GET, PUT }
 
-        public HttpWebBase(string connectId) => Ip = connectId;
+        public HttpWebBase(string connectId) => _ip = connectId;
 
         protected void OnTryConnecting(string path)
         {
@@ -36,14 +36,13 @@ namespace SmsAuthAPI.Program
             if (api)
                 apiRoute = RootApi;
 
-            string path = $"{Ip}{apiRoute}/{apiName.ToLower()}/{apiData}";
+            string path = $"{_ip}{apiRoute}/{apiName.ToLower()}/{apiData}";
 
             return $"https://{path}";
         }
 
         protected UnityWebRequest CreateWebRequest(string path, RequestType type, string accessToken = null, string uploadBody = null, bool timeOut = true)
         {
-            Debug.Log($"path - {path}\nReq type - {type}\ntoken - {accessToken}\n, body - {uploadBody}\ntimeout - {timeOut}");
             var webRequest = new UnityWebRequest(path, type.ToString());
             webRequest.downloadHandler = new DownloadHandlerBuffer();
 
@@ -58,9 +57,6 @@ namespace SmsAuthAPI.Program
             if (string.IsNullOrEmpty(accessToken) == false)
                 webRequest.SetRequestHeader("Authorization", $"Bearer {accessToken}");
 
-            Debug.Log($"uri - {webRequest.uri}\n" +
-                $"url - {webRequest.url}\n" +
-                $"error - {webRequest.error}");
             return webRequest;
         }
 
@@ -80,24 +76,6 @@ namespace SmsAuthAPI.Program
 #endif
             if (webRequest.result != UnityWebRequest.Result.Success)
                 Debug.LogError($"Response {method} fail: {webRequest.error}, {webRequest.result}");
-        }
-    }
-
-    public class CertificateHandlerPublicKey : CertificateHandler
-    {
-        private static readonly string s_publicKey = "somepublickey";
-
-        protected override bool ValidateCertificate(byte[] certificateData)
-        {
-            X509Certificate2 certificate = new X509Certificate2(certificateData);
-            string pk = certificate.GetPublicKeyString();
-
-            Debug.Log(pk);
-
-            if (pk.ToLower().Equals(s_publicKey.ToLower()))
-                return true;
-
-            return false;
         }
     }
 }

@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using SmsAuthAPI.DTO;
-using UnityEngine;
 
 namespace SmsAuthAPI.Program
 {
