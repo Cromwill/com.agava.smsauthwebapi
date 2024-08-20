@@ -74,7 +74,7 @@ namespace SmsAuthAPI.DTO
             }
             else
             {
-                SaveLoadLocalDataService.Delete(Tokens);
+                ClearTokens();
                 return false;
             }
         }

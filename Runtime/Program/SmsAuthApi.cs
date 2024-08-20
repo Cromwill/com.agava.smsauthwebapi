@@ -109,6 +109,12 @@ namespace SmsAuthAPI.Program
             return await _httpClient.GetRemote("Remoteconfig", remoteName);
         }
 
+        public async static Task<Response> GetPluginSettings(string remoteName)
+        {
+            EnsureInitialize();
+            return await _httpClient.GetPluginSettings("RemoteConfig", remoteName);
+        }
+
         public async static Task<Response> SetSave(string accessToken, string body)
         {
             EnsureInitialize();

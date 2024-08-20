@@ -94,6 +94,21 @@ namespace SmsAuthAPI.Program
             return new Response(webRequest.result, webRequest.result.ToString(), body, false);
         }
 
+        public async Task<Response> GetPluginSettings(string apiName, string key)
+        {
+            string path = $"{GetHttpPath(apiName, key.ToLower())}";
+            OnTryConnecting(path);
+
+            var webRequest = CreateWebRequest(path, RequestType.GET);
+            webRequest.SendWebRequest();
+
+            await WaitProccessing(webRequest);
+            TryShowRequestInfo(webRequest, apiName);
+
+            var body = webRequest.downloadHandler.text;
+            return new Response(webRequest.result, webRequest.result.ToString(), body, false);
+        }
+
         public async Task<Response> SetCloudData(Request request, string key)
         {
             string path = $"{GetHttpPath(request.apiName, key)}";
