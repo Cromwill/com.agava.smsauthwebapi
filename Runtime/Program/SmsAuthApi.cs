@@ -193,26 +193,6 @@ namespace SmsAuthAPI.Program
 
     public static partial class SmsAuthApi
     {
-        class TimespentAllUsersData
-        {
-            public string app_id;
-            public ulong minutes;
-        }
-
-        class TimespentUserAllAppData
-        {
-            public string phone;
-            public string device_id;
-            public ulong minutes;
-        }
-
-        class AverageCountAppsUserData
-        {
-            public string phone { get; set; }
-            public string san_id { get; set; }
-            public string app_id { get; set; }
-        }
-
         public async static void SetTimespentAllUsers(string appId, ulong minutes)
         {
             EnsureInitialize();
@@ -232,20 +212,20 @@ namespace SmsAuthAPI.Program
             await _httpClient.SetTimespent(request);
         }
 
-        public async static void SetTimespentAllApp(string phone, string deviceId, ulong minutes)
+        public async static void SetTimespentAllApp(string phone, string appId, ulong seconds)
         {
             EnsureInitialize();
 
             string data = JsonConvert.SerializeObject(new TimespentUserAllAppData()
             {
                 phone = phone,
-                device_id = deviceId,
-                minutes = minutes
+                app_id = appId,
+                seconds = seconds,
             });
 
             var request = new Request()
             {
-                apiName = "Analytics/timespent-all-app",
+                apiName = "Analytics/timespent-user-app",
                 body = data,
             };
 
