@@ -1,19 +1,20 @@
-﻿using UnityEngine.Scripting;
+﻿using System;
+using UnityEngine.Scripting;
 
 namespace SmsAuthAPI.DTO
 {
     /// <summary>
     ///     Plugin settings data.
     /// </summary>
-    [Preserve]
+    [Preserve, Serializable]
     public class PluginSettings
     {
-        public string app_name { get; set; }
-        public string platform { get; set; }
-        public int released_version { get; set; }
-        public int review_version { get; set; }
-        public string plugin_state { get; set; }
-        public string test_review { get; set; }
-        public string common { get; set; }
+        public string app_name;
+        public string platform;
+        public int released_version;
+        public int review_version;
+        public string plugin_state;
+        public string test_review;
+        public string common;
     }
 }
