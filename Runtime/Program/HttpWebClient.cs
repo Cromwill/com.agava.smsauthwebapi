@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using SmsAuthAPI.DTO;
+using UnityEngine.Networking;
 
 namespace SmsAuthAPI.Program
 {
@@ -14,13 +15,15 @@ namespace SmsAuthAPI.Program
             string path = $"{GetHttpPath(request.apiName)}";
             OnTryConnecting(path);
 
-            var webRequest = CreateWebRequest(path, RequestType.POST, string.Empty, request.body);
-            webRequest.SendWebRequest();
+            using (UnityWebRequest webRequest = CreateWebRequest(path, RequestType.POST, string.Empty, request.body))
+            {
+                webRequest.SendWebRequest();
 
-            await WaitProccessing(webRequest);
-            TryShowRequestInfo(webRequest, request.apiName);
+                await WaitProccessing(webRequest);
+                TryShowRequestInfo(webRequest, request.apiName);
 
-            return new Response(webRequest.result, webRequest.result.ToString(), webRequest.downloadHandler.text, false);
+                return new Response(webRequest.result, webRequest.result.ToString(), webRequest.downloadHandler.text, false);
+            }
         }
 
         public async Task<Response> Regist(string apiName, string phone)
@@ -28,13 +31,15 @@ namespace SmsAuthAPI.Program
             string path = $"{GetHttpPath(apiName, phone)}";
             OnTryConnecting(path);
 
-            var webRequest = CreateWebRequest(path, RequestType.POST);
-            webRequest.SendWebRequest();
+            using (UnityWebRequest webRequest = CreateWebRequest(path, RequestType.POST))
+            {
+                webRequest.SendWebRequest();
 
-            await WaitProccessing(webRequest);
-            TryShowRequestInfo(webRequest, apiName);
+                await WaitProccessing(webRequest);
+                TryShowRequestInfo(webRequest, apiName);
 
-            return new Response(webRequest.result, webRequest.result.ToString(), webRequest.downloadHandler.text, false);
+                return new Response(webRequest.result, webRequest.result.ToString(), webRequest.downloadHandler.text, false);
+            }
         }
 
         public async Task<Response> Refresh(Request request)
@@ -42,13 +47,15 @@ namespace SmsAuthAPI.Program
             string path = $"{GetHttpPath(request.apiName)}";
             OnTryConnecting(path);
 
-            var webRequest = CreateWebRequest(path, RequestType.POST, string.Empty, $"\"{request.refresh_token}\"");
-            webRequest.SendWebRequest();
+            using (UnityWebRequest webRequest = CreateWebRequest(path, RequestType.POST, string.Empty, $"\"{request.refresh_token}\""))
+            {
+                webRequest.SendWebRequest();
 
-            await WaitProccessing(webRequest);
-            TryShowRequestInfo(webRequest, request.apiName);
+                await WaitProccessing(webRequest);
+                TryShowRequestInfo(webRequest, request.apiName);
 
-            return new Response(webRequest.result, webRequest.result.ToString(), webRequest.downloadHandler.text, false);
+                return new Response(webRequest.result, webRequest.result.ToString(), webRequest.downloadHandler.text, false);
+            }
         }
 
         public async Task<Response> Unlink(Request request)
@@ -56,13 +63,15 @@ namespace SmsAuthAPI.Program
             string path = $"{GetHttpPath(request.apiName)}";
             OnTryConnecting(path);
 
-            var webRequest = CreateWebRequest(path, RequestType.POST, request.access_token, request.body);
-            webRequest.SendWebRequest();
+            using (UnityWebRequest webRequest = CreateWebRequest(path, RequestType.POST, request.access_token, request.body))
+            {
+                webRequest.SendWebRequest();
 
-            await WaitProccessing(webRequest);
-            TryShowRequestInfo(webRequest, request.apiName);
+                await WaitProccessing(webRequest);
+                TryShowRequestInfo(webRequest, request.apiName);
 
-            return new Response(webRequest.result, webRequest.result.ToString(), webRequest.downloadHandler.text, false);
+                return new Response(webRequest.result, webRequest.result.ToString(), webRequest.downloadHandler.text, false);
+            }
         }
 
         public async Task<Response> GetDevices(Request request)
@@ -70,13 +79,15 @@ namespace SmsAuthAPI.Program
             string path = $"{GetHttpPath(request.apiName, request.body)}";
             OnTryConnecting(path);
 
-            var webRequest = CreateWebRequest(path, RequestType.GET, request.access_token);
-            webRequest.SendWebRequest();
+            using (UnityWebRequest webRequest = CreateWebRequest(path, RequestType.GET, request.access_token))
+            {
+                webRequest.SendWebRequest();
 
-            await WaitProccessing(webRequest);
-            TryShowRequestInfo(webRequest, request.apiName);
+                await WaitProccessing(webRequest);
+                TryShowRequestInfo(webRequest, request.apiName);
 
-            return new Response(webRequest.result, webRequest.result.ToString(), webRequest.downloadHandler.text, false);
+                return new Response(webRequest.result, webRequest.result.ToString(), webRequest.downloadHandler.text, false);
+            }
         }
 
         public async Task<Response> GetRemote(string apiName, string key)
@@ -84,14 +95,16 @@ namespace SmsAuthAPI.Program
             string path = $"{GetHttpPath(apiName, key.ToLower())}";
             OnTryConnecting(path);
 
-            var webRequest = CreateWebRequest(path, RequestType.GET);
-            webRequest.SendWebRequest();
+            using (UnityWebRequest webRequest = CreateWebRequest(path, RequestType.GET))
+            {
+                webRequest.SendWebRequest();
 
-            await WaitProccessing(webRequest);
-            TryShowRequestInfo(webRequest, apiName);
+                await WaitProccessing(webRequest);
+                TryShowRequestInfo(webRequest, apiName);
 
-            var body = JsonConvert.DeserializeObject<string>(webRequest.downloadHandler.text);
-            return new Response(webRequest.result, webRequest.result.ToString(), body, false);
+                var body = JsonConvert.DeserializeObject<string>(webRequest.downloadHandler.text);
+                return new Response(webRequest.result, webRequest.result.ToString(), body, false);
+            }
         }
 
         public async Task<Response> GetPluginSettings(string apiName, string key)
@@ -99,14 +112,16 @@ namespace SmsAuthAPI.Program
             string path = $"{GetHttpPath(apiName, key.ToLower())}";
             OnTryConnecting(path);
 
-            var webRequest = CreateWebRequest(path, RequestType.GET);
-            webRequest.SendWebRequest();
+            using (UnityWebRequest webRequest = CreateWebRequest(path, RequestType.GET))
+            {
+                webRequest.SendWebRequest();
 
-            await WaitProccessing(webRequest);
-            TryShowRequestInfo(webRequest, apiName);
+                await WaitProccessing(webRequest);
+                TryShowRequestInfo(webRequest, apiName);
 
-            var body = webRequest.downloadHandler.text;
-            return new Response(webRequest.result, webRequest.result.ToString(), body, false);
+                string body = webRequest.downloadHandler.text;
+                return new Response(webRequest.result, webRequest.result.ToString(), body, false);
+            }
         }
 
         public async Task<Response> SetCloudData(Request request, string key)
@@ -114,13 +129,15 @@ namespace SmsAuthAPI.Program
             string path = $"{GetHttpPath(request.apiName, key)}";
             OnTryConnecting(path);
 
-            var webRequest = CreateWebRequest(path, RequestType.PUT, request.access_token, request.body);
-            webRequest.SendWebRequest();
+            using (UnityWebRequest webRequest = CreateWebRequest(path, RequestType.PUT, request.access_token, request.body))
+            {
+                webRequest.SendWebRequest();
 
-            await WaitProccessing(webRequest);
-            TryShowRequestInfo(webRequest, request.apiName);
+                await WaitProccessing(webRequest);
+                TryShowRequestInfo(webRequest, request.apiName);
 
-            return new Response(webRequest.result, webRequest.result.ToString(), webRequest.downloadHandler.text, false);
+                return new Response(webRequest.result, webRequest.result.ToString(), webRequest.downloadHandler.text, false);
+            }
         }
 
         public async Task<Response> GetCloudData(Request request, Action<float> progress)
@@ -128,13 +145,15 @@ namespace SmsAuthAPI.Program
             string path = $"{GetHttpPath(request.apiName, request.body)}";
             OnTryConnecting(path);
 
-            var webRequest = CreateWebRequest(path, RequestType.GET, request.access_token);
-            webRequest.SendWebRequest();
+            using (UnityWebRequest webRequest = CreateWebRequest(path, RequestType.GET, request.access_token))
+            {
+                webRequest.SendWebRequest();
 
-            await WaitProccessing(webRequest, progress);
-            TryShowRequestInfo(webRequest, request.apiName);
+                await WaitProccessing(webRequest, progress);
+                TryShowRequestInfo(webRequest, request.apiName);
 
-            return new Response(webRequest.result, webRequest.result.ToString(), webRequest.downloadHandler.text, false);
+                return new Response(webRequest.result, webRequest.result.ToString(), webRequest.downloadHandler.text, false);
+            }
         }
 
         public async Task<Response> DeleteAccount(Request request, string key)
@@ -142,13 +161,15 @@ namespace SmsAuthAPI.Program
             string path = $"{GetHttpPath(request.apiName, key)}";
             OnTryConnecting(path);
 
-            var webRequest = CreateWebRequest(path, RequestType.POST, request.access_token);
-            webRequest.SendWebRequest();
+            using (UnityWebRequest webRequest = CreateWebRequest(path, RequestType.POST, request.access_token))
+            {
+                webRequest.SendWebRequest();
 
-            await WaitProccessing(webRequest);
-            TryShowRequestInfo(webRequest, request.apiName);
+                await WaitProccessing(webRequest);
+                TryShowRequestInfo(webRequest, request.apiName);
 
-            return new Response(webRequest.result, webRequest.result.ToString(), webRequest.downloadHandler.text, false);
+                return new Response(webRequest.result, webRequest.result.ToString(), webRequest.downloadHandler.text, false);
+            }
         }
 
         public async Task<Response> HasActiveAccount(Request request)
@@ -156,13 +177,15 @@ namespace SmsAuthAPI.Program
             string path = $"{GetHttpPath(request.apiName, request.body, api: false)}";
             OnTryConnecting(path);
 
-            var webRequest = CreateWebRequest(path, RequestType.GET);
-            webRequest.SendWebRequest();
+            using (UnityWebRequest webRequest = CreateWebRequest(path, RequestType.GET))
+            {
+                webRequest.SendWebRequest();
 
-            await WaitProccessing(webRequest);
-            TryShowRequestInfo(webRequest, request.apiName);
+                await WaitProccessing(webRequest);
+                TryShowRequestInfo(webRequest, request.apiName);
 
-            return new Response(webRequest.result, webRequest.result.ToString(), webRequest.downloadHandler.text, false);
+                return new Response(webRequest.result, webRequest.result.ToString(), webRequest.downloadHandler.text, false);
+            }
         }
 
         public async Task<Response> GetSanId(Request request)
@@ -170,13 +193,15 @@ namespace SmsAuthAPI.Program
             string path = $"{GetHttpPath(request.apiName, request.body, api: false)}";
             OnTryConnecting(path);
 
-            var webRequest = CreateWebRequest(path, RequestType.GET);
-            webRequest.SendWebRequest();
+            using (UnityWebRequest webRequest = CreateWebRequest(path, RequestType.GET))
+            {
+                webRequest.SendWebRequest();
 
-            await WaitProccessing(webRequest);
-            TryShowRequestInfo(webRequest, request.apiName);
+                await WaitProccessing(webRequest);
+                TryShowRequestInfo(webRequest, request.apiName);
 
-            return new Response(webRequest.result, webRequest.result.ToString(), webRequest.downloadHandler.text, false);
+                return new Response(webRequest.result, webRequest.result.ToString(), webRequest.downloadHandler.text, false);
+            }
         }
 
         public async Task<Response> SetTimespent(Request request)
@@ -184,13 +209,15 @@ namespace SmsAuthAPI.Program
             string path = $"{GetHttpPath(request.apiName, null, api: false)}";
             OnTryConnecting(path);
 
-            var webRequest = CreateWebRequest(path, RequestType.POST, null, request.body);
-            webRequest.SendWebRequest();
+            using (UnityWebRequest webRequest = CreateWebRequest(path, RequestType.POST, null, request.body))
+            {
+                webRequest.SendWebRequest();
 
-            await WaitProccessing(webRequest);
-            TryShowRequestInfo(webRequest, request.apiName);
+                await WaitProccessing(webRequest);
+                TryShowRequestInfo(webRequest, request.apiName);
 
-            return new Response(webRequest.result, webRequest.result.ToString(), null, false);
+                return new Response(webRequest.result, webRequest.result.ToString(), null, false);
+            }
         }
 
         public async Task<Response> OnUserAddApp(Request request)
@@ -198,13 +225,15 @@ namespace SmsAuthAPI.Program
             string path = $"{GetHttpPath(request.apiName, null, api: false)}";
             OnTryConnecting(path);
 
-            var webRequest = CreateWebRequest(path, RequestType.POST, null, request.body);
-            webRequest.SendWebRequest();
+            using (UnityWebRequest webRequest = CreateWebRequest(path, RequestType.POST, null, request.body))
+            {
+                webRequest.SendWebRequest();
 
-            await WaitProccessing(webRequest);
-            TryShowRequestInfo(webRequest, request.apiName);
+                await WaitProccessing(webRequest);
+                TryShowRequestInfo(webRequest, request.apiName);
 
-            return new Response(webRequest.result, webRequest.result.ToString(), null, false);
+                return new Response(webRequest.result, webRequest.result.ToString(), null, false);
+            }
         }
     }
 
