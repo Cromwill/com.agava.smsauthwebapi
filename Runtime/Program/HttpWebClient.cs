@@ -10,6 +10,22 @@ namespace SmsAuthAPI.Program
     {
         public HttpWebClient(string connectId) : base(connectId) { }
 
+        public async Task<Response> SendStartData(Request request)
+        {
+            string path = $"{GetHttpPath(request.apiName)}";
+            OnTryConnecting(path);
+
+            using (UnityWebRequest webRequest = CreateWebRequest(path, RequestType.POST, string.Empty, request.body))
+            {
+                webRequest.SendWebRequest();
+
+                await WaitProccessing(webRequest);
+                TryShowRequestInfo(webRequest, request.apiName);
+
+                return new Response(webRequest.result, webRequest.result.ToString(), webRequest.downloadHandler.text, false);
+            }
+        }
+
         public async Task<Response> Login(Request request)
         {
             string path = $"{GetHttpPath(request.apiName)}";

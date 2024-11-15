@@ -183,6 +183,18 @@ namespace SmsAuthAPI.Program
             return await _httpClient.GetSanId(request);
         }
 
+        public static async Task<Response> SendStartData(StartUserData data)
+        {
+            EnsureInitialize();
+
+            var request = new Request()
+            {
+                apiName = "Registration/start-save-data",
+                body = JsonConvert.SerializeObject(data),
+            };
+
+            return await _httpClient.SendStartData(request);
+        }
 
         private static void EnsureInitialize()
         {
