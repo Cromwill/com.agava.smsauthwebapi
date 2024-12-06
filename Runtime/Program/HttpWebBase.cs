@@ -75,7 +75,7 @@ namespace SmsAuthAPI.Program
             Debug.Log($"response {method} done {webRequest.result}. Result: {webRequest.downloadHandler.text}");
 #endif
             if (webRequest.result != UnityWebRequest.Result.Success)
-                Debug.LogError($"Response {method} fail: {webRequest.error}, {webRequest.result}");
+                Debug.Log($"Response {method} fail: {webRequest.error}, {webRequest.result}");
         }
     }
 }
