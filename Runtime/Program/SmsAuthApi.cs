@@ -244,6 +244,29 @@ namespace SmsAuthAPI.Program
             await _httpClient.SetTimespent(request);
         }
 
+        public async static void SendEventSubscriberData(string san, string phone, string date, string appId, string version, string platform)
+        {
+            EnsureInitialize();
+
+            string data = JsonConvert.SerializeObject(new SubscriberEventsData()
+            {
+                san = san,
+                phone = phone,
+                date = date,
+                app_id = appId,
+                version = version,
+                platform = platform,
+            });
+
+            var request = new Request()
+            {
+                apiName = "Analytics/send-event-subscriber-data",
+                body = data,
+            };
+
+            await _httpClient.SendEventSubscriberData(request);
+        }
+
         public async static void OnUserAddApp(string phone, string sanId, string appId)
         {
             EnsureInitialize();

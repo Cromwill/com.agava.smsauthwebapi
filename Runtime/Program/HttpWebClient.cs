@@ -236,6 +236,22 @@ namespace SmsAuthAPI.Program
             }
         }
 
+        public async Task<Response> SendEventSubscriberData(Request request)
+        {
+            string path = $"{GetHttpPath(request.apiName, null, api: false)}";
+            OnTryConnecting(path);
+
+            using (UnityWebRequest webRequest = CreateWebRequest(path, RequestType.POST, null, request.body))
+            {
+                webRequest.SendWebRequest();
+
+                await WaitProccessing(webRequest);
+                TryShowRequestInfo(webRequest, request.apiName);
+
+                return new Response(webRequest.result, webRequest.result.ToString(), null, false);
+            }
+        }
+
         public async Task<Response> OnUserAddApp(Request request)
         {
             string path = $"{GetHttpPath(request.apiName, null, api: false)}";
