@@ -1,14 +1,16 @@
 {
-    "author": "github.com/doCent90",
-    "dependencies": {
-        "com.unity.nuget.newtonsoft-json": "3.0.2",
-        "com.unity.textmeshpro": "3.0.6"
-    },
-    "description": "Sms Authenfication. Cloud saves.",
-    "displayName": "Sms Auth Web API",
-    "license": "MIT",
-    "name": "com.agava.smsauthwebapi",
-    "type": "library",
-    "unity": "2022.3",
-    "version": "1.1.0"
+  "author": "github.com/doCent90",
+  "dependencies": {
+    "com.unity.nuget.newtonsoft-json": "3.0.2",
+    "com.unity.textmeshpro": "3.0.6",
+    "com.google.external-dependency-manager": "1.2.183",
+    "io.appmetrica.analytics": "6.3.0"
+  },
+  "description": "Sms Authenfication. Cloud saves.",
+  "displayName": "Sms Auth Web API",
+  "license": "MIT",
+  "name": "com.agava.smsauthwebapi",
+  "type": "library",
+  "unity": "2022.3",
+  "version": "1.1.0"
 }
