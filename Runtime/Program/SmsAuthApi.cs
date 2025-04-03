@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using SmsAuthAPI.DTO;
 using UnityEngine;
+using UnityEngine.Networking;
 
 namespace SmsAuthAPI.Program
 {
@@ -107,6 +109,12 @@ namespace SmsAuthAPI.Program
         {
             EnsureInitialize();
             return await _httpClient.GetRemote("Remoteconfig", remoteName);
+        }
+
+        public async static Task<Response> GetRemoteServerConfig()
+        {
+            EnsureInitialize();
+            return await _httpClient.GetServerRemote("RemoteConfig/getremote-table");
         }
 
         public async static Task<Response> GetPluginSettings(string remoteName)

@@ -123,6 +123,23 @@ namespace SmsAuthAPI.Program
             }
         }
 
+        public async Task<Response> GetServerRemote(string apiName)
+        {
+            string path = $"{GetHttpPath(apiName)}";
+            OnTryConnecting(path);
+
+            using (UnityWebRequest webRequest = CreateWebRequest(path, RequestType.POST))
+            {
+                webRequest.SendWebRequest();
+
+                await WaitProccessing(webRequest);
+                TryShowRequestInfo(webRequest, apiName);
+
+                var body = webRequest.downloadHandler.text;
+                return new Response(webRequest.result, webRequest.result.ToString(), body, false);
+            }
+        }
+
         public async Task<Response> GetPluginSettings(string apiName, string key)
         {
             string path = $"{GetHttpPath(apiName, key.ToLower())}";
