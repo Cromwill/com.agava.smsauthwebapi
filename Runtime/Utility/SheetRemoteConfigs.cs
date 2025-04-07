@@ -74,9 +74,7 @@ namespace SmsAuthAPI.Utility
         private static char GetPlatformSpecificLineEnd()
         {
             char lineEnding = '\n';
-#if UNITY_IOS
-            lineEnding = '\r';
-#endif
+
             return lineEnding;
         }
     }
