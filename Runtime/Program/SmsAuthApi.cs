@@ -178,6 +178,34 @@ namespace SmsAuthAPI.Program
             return await _httpClient.HasActiveAccount(request);
         }
 
+        public async static Task<Response> HasTempActiveAccount(string phoneNumber, string accessToken)
+        {
+            EnsureInitialize();
+
+            var request = new Request()
+            {
+                apiName = "account/subscription/temp/get-user",
+                body = phoneNumber,
+                access_token = accessToken,
+            };
+
+            return await _httpClient.HasTempActiveAccount(request);
+        }
+
+        public async static Task<Response> SendTempActiveAccountData(string phoneNumber, string accessToken)
+        {
+            EnsureInitialize();
+
+            var request = new Request()
+            {
+                apiName = "account/subscription/temp/activation",
+                body = phoneNumber,
+                access_token = accessToken,
+            };
+
+            return await _httpClient.SendTempActiveAccountData(request);
+        }
+
         public async static Task<Response> GetSanId(string phoneNumber)
         {
             EnsureInitialize();
