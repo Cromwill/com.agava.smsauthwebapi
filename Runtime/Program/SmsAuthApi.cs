@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using SmsAuthAPI.DTO;
 using UnityEngine;
+using UnityEngine.Networking;
 
 namespace SmsAuthAPI.Program
 {
@@ -109,6 +111,12 @@ namespace SmsAuthAPI.Program
             return await _httpClient.GetRemote("Remoteconfig", remoteName);
         }
 
+        public async static Task<Response> GetRemoteServerConfig()
+        {
+            EnsureInitialize();
+            return await _httpClient.GetServerRemote("RemoteConfig/getremote-table");
+        }
+
         public async static Task<Response> GetPluginSettings(string remoteName)
         {
             EnsureInitialize();
@@ -168,6 +176,34 @@ namespace SmsAuthAPI.Program
             };
 
             return await _httpClient.HasActiveAccount(request);
+        }
+
+        public async static Task<Response> HasTempActiveAccount(string phoneNumber, string accessToken)
+        {
+            EnsureInitialize();
+
+            var request = new Request()
+            {
+                apiName = "account/subscription/temp/get-user",
+                body = phoneNumber,
+                access_token = accessToken,
+            };
+
+            return await _httpClient.HasTempActiveAccount(request);
+        }
+
+        public async static Task<Response> SendTempActiveAccountData(string phoneNumber, string accessToken)
+        {
+            EnsureInitialize();
+
+            var request = new Request()
+            {
+                apiName = "account/subscription/temp/activation",
+                body = phoneNumber,
+                access_token = accessToken,
+            };
+
+            return await _httpClient.SendTempActiveAccountData(request);
         }
 
         public async static Task<Response> GetSanId(string phoneNumber)

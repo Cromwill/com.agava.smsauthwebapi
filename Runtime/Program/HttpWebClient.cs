@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using SmsAuthAPI.DTO;
@@ -123,6 +124,23 @@ namespace SmsAuthAPI.Program
             }
         }
 
+        public async Task<Response> GetServerRemote(string apiName)
+        {
+            string path = $"{GetHttpPath(apiName)}";
+            OnTryConnecting(path);
+
+            using (UnityWebRequest webRequest = CreateWebRequest(path, RequestType.POST))
+            {
+                webRequest.SendWebRequest();
+
+                await WaitProccessing(webRequest);
+                TryShowRequestInfo(webRequest, apiName);
+
+                var body = webRequest.downloadHandler.text;
+                return new Response(webRequest.result, webRequest.result.ToString(), body, false);
+            }
+        }
+
         public async Task<Response> GetPluginSettings(string apiName, string key)
         {
             string path = $"{GetHttpPath(apiName, key.ToLower())}";
@@ -191,9 +209,43 @@ namespace SmsAuthAPI.Program
         public async Task<Response> HasActiveAccount(Request request)
         {
             string path = $"{GetHttpPath(request.apiName, request.body, api: false)}";
+
             OnTryConnecting(path);
 
             using (UnityWebRequest webRequest = CreateWebRequest(path, RequestType.GET))
+            {
+                webRequest.SendWebRequest();
+
+                await WaitProccessing(webRequest);
+                TryShowRequestInfo(webRequest, request.apiName);
+
+                return new Response(webRequest.result, webRequest.result.ToString(), webRequest.downloadHandler.text, false);
+            }
+        }
+
+        public async Task<Response> HasTempActiveAccount(Request request)
+        {
+            string path = $"{GetHttpPath(request.apiName, api: false)}";
+
+            OnTryConnecting(path);
+
+            using (UnityWebRequest webRequest = CreateWebRequest(path, RequestType.GET, request.access_token, request.body))
+            {
+                webRequest.SendWebRequest();
+
+                await WaitProccessing(webRequest);
+                TryShowRequestInfo(webRequest, request.apiName);
+
+                return new Response(webRequest.result, webRequest.result.ToString(), webRequest.downloadHandler.text, false);
+            }
+        }
+
+        public async Task<Response> SendTempActiveAccountData(Request request)
+        {
+            string path = $"{GetHttpPath(request.apiName, api: false)}";
+            OnTryConnecting(path);
+
+            using (UnityWebRequest webRequest = CreateWebRequest(path, RequestType.POST, request.access_token, request.body))
             {
                 webRequest.SendWebRequest();
 
